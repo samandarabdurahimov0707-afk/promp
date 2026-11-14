@@ -1,0 +1,20 @@
+{
+  "name": "prompt-kursi",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Prompt injenering kursi — video kurs sayti, Payme va karta to'lovi",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "check": "node scripts/check.mjs",
+    "test": "node --test tests/functions.test.mjs",
+    "verify": "npm run check && npm test"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.9"
+  }
+}

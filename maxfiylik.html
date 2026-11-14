@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maxfiylik siyosati — Prompt injenering kursi</title>
+  <meta name="description" content="Prompt injenering kursining maxfiylik siyosati: qanday ma'lumotlar yig'iladi, qanday saqlanadi va uchinchi tomon xizmatlari.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0a0c12">
+  <link rel="canonical" href="https://SAYTINGIZ.netlify.app/maxfiylik.html">
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Asosiy kontentga o'tish</a>
+
+  <header class="navbar">
+    <div class="navbar__inner">
+      <a class="brand" href="index.html" aria-label="Prompt injenering kursi — bosh sahifa">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg>
+        </span>
+        <span class="brand__text">Prompt injenering kursi</span>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Menyuni ochish">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="nav" id="nav-menu" aria-label="Asosiy menyu">
+        <a class="nav__link" href="index.html#videolar">Videolar</a>
+        <a class="nav__link" href="index.html#kurs-haqida">Kurs haqida</a>
+        <a class="nav__link" href="index.html#narx">Narx</a>
+        <a class="nav__link" href="index.html#faq">FAQ</a>
+        <a class="nav__cta" href="index.html#videolar">Boshlash</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="legal" id="main">
+    <p class="eyebrow">Huquqiy ma'lumot</p>
+    <h1>Maxfiylik siyosati</h1>
+    <p class="legal__updated">Oxirgi yangilanish: 2026-yil 14-noyabr</p>
+
+    <p>
+      Ushbu siyosat «Prompt injenering kursi» saytidan foydalanganda qanday
+      ma'lumotlar yig'ilishi, nima uchun ishlatilishi va qanday himoyalanishi
+      haqida ma'lumot beradi.
+    </p>
+
+    <h2>1. Qanday ma'lumotlar yig'iladi</h2>
+    <ul>
+      <li><strong>Brauzer identifikatori (uid):</strong> sayt birinchi ochilganda tasodifiy yaratiladi va brauzeringizda saqlanadi. U shaxsingizni aniqlamaydi.</li>
+      <li><strong>Hisob ma'lumotlari:</strong> ro'yxatdan o'tganda ism, email va parol qabul qilinadi. Parol ochiq saqlanmaydi — u <strong>scrypt</strong> bilan xeshlanadi.</li>
+      <li><strong>To'lov holati:</strong> kirish huquqi berilgan yoki berilmaganligi, buyurtma kodi va to'lov summasi.</li>
+      <li><strong>Texnik ma'lumotlar:</strong> hosting va xavfsizlik uchun IP manzil, so'rov vaqti va brauzer turi server jurnallarida vaqtincha saqlanishi mumkin.</li>
+      <li><strong>O'quv jarayoni:</strong> qaysi darslar tugallangani faqat sizning brauzeringizda (localStorage) saqlanadi va serverga yuborilmaydi.</li>
+    </ul>
+
+    <h2>2. Ma'lumotlardan foydalanish maqsadi</h2>
+    <ul>
+      <li>To'lovni tasdiqlash va kirish huquqini berish.</li>
+      <li>Buyurtma holatini tekshirish va qo'llab-quvvatlash.</li>
+      <li>Sayt xavfsizligini ta'minlash va suiiste'molning oldini olish.</li>
+      <li>Xizmat sifatini yaxshilash.</li>
+    </ul>
+
+    <h2>3. Cookie va localStorage</h2>
+    <p>
+      Sayt kirish huquqini saqlash uchun imzolangan <strong>HttpOnly cookie</strong>
+      (`pk_access`), hisobga kirish uchun 30 kunlik sessiya cookie'si
+      (`pk_session`) va brauzer identifikatori uchun <strong>localStorage</strong>
+      (`pk_uid`) ishlatadi. O'quv jarayoni (`pk_progress`, `pk_last_lesson`,
+      `pk_filter`) ham faqat brauzeringizda saqlanadi.
+    </p>
+    <p>
+      Cookie'lar JavaScript orqali o'qilmaydi (`HttpOnly`) va faqat HTTPS
+      ulanishda `Secure` belgisi bilan yuboriladi. Tizimdan chiqqaningizda
+      ikkala cookie ham o'chiriladi.
+    </p>
+    <p>
+      Brauzer ma'lumotlarini tozalash kirish huquqini ham o'chirishi mumkin.
+      Hisobingiz bo'lsa, qayta kirish orqali huquq tiklanadi. Hisobsiz
+      foydalanuvchi uchun to'lov cheki yoki buyurtma kodi kerak bo'ladi.
+    </p>
+
+    <h2>4. Uchinchi tomon xizmatlari</h2>
+    <ul>
+      <li><strong>Payme</strong> — to'lovni qabul qilish va tasdiqlash. Payme o'z maxfiylik siyosatiga muvofiq ishlaydi.</li>
+      <li><strong>Netlify</strong> — sayt hostingi, server funksiyalari va ma'lumotlar ombori.</li>
+      <li><strong>Telegram</strong> — faqat siz o'zingiz aloqa havolasini bosganingizda ishlatiladi.</li>
+      <li><strong>YouTube / Bunny Stream</strong> — agar video shu platformalarda joylangan bo'lsa, video ko'rishda ularning siyosatlari amal qiladi.</li>
+    </ul>
+
+    <h2>5. Ma'lumotlarni saqlash muddati</h2>
+    <p>
+      Hisob, buyurtma va to'lov holati kirish huquqini ta'minlash uchun zarur
+      bo'lgan muddat saqlanadi. Sessiya cookie'si 30 kundan keyin o'z-o'zidan
+      tugaydi. Texnik jurnallar odatda qisqa muddatli bo'ladi. O'quv jarayoni
+      ma'lumotlari sizning brauzeringizda siz o'chirmaguningizcha qoladi.
+    </p>
+
+    <h2>6. Ma'lumotlar xavfsizligi</h2>
+    <ul>
+      <li>Maxfiy kalitlar faqat serverda, environment variables ichida saqlanadi.</li>
+      <li>Parollar scrypt bilan xeshlanadi; email indeksi SHA-256 orqali yashiriladi.</li>
+      <li>Kirish huquqi va sessiya HMAC-SHA256 bilan imzolangan cookie orqali beriladi.</li>
+      <li>Admin, to'lov va hisob endpointlarida so'rovlar cheklangan va autentifikatsiya qilinadi.</li>
+      <li>Sayt HTTPS orqali ishlaydi.</li>
+    </ul>
+
+    <h2>7. Sizning huquqlaringiz</h2>
+    <p>
+      O'zingiz haqingizdagi ma'lumotlar bo'yicha savol, tuzatish yoki o'chirish
+      so'rovi bilan kurs egasiga murojaat qilishingiz mumkin. Hisobingizni
+      o'chirish uchun Telegram orqali yozing; to'lov va kirish huquqi
+      yozuvlari qonuniy talablar doirasida saqlanishi mumkin. Brauzer
+      ma'lumotlarini istalgan vaqtda o'chirishingiz mumkin.
+    </p>
+
+    <h2>8. Bolalar</h2>
+    <p>
+      Sayt 18 yoshgacha bo'lgan shaxslardan ongli ravishda shaxsiy ma'lumot
+      yig'maydi. To'lov voyaga yetgan shaxs tomonidan amalga oshirilishi kerak.
+    </p>
+
+    <h2>9. O'zgartirishlar va aloqa</h2>
+    <p>
+      Ushbu siyosat vaqti-vaqti bilan yangilanishi mumkin. Savollar uchun
+      <a href="#" data-telegram hidden>Telegram</a>
+      <span>kurs egasining Telegram manzili orqali</span> bog'laning.
+    </p>
+
+    <p class="legal__note">
+      Ushbu hujjat namunaviy tuzilma asosida yozilgan. Sayt egasi o'z
+      faoliyatiga moslashtirib, zarur bo'lsa yuridik maslahat olishi kerak.
+    </p>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <a class="brand" href="index.html">
+          <span class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg>
+          </span>
+          <span class="brand__text">Prompt injenering kursi</span>
+        </a>
+        <p>Sun'iy intellekt bilan ishlashni o'rgatuvchi amaliy video kurs.</p>
+      </div>
+
+      <nav class="footer__col" aria-label="Sahifalar">
+        <h3>Sahifalar</h3>
+        <a href="index.html#videolar">Videolar</a>
+        <a href="index.html#kurs-haqida">Kurs haqida</a>
+        <a href="index.html#narx">Narx</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
+
+      <div class="footer__col">
+        <h3>Aloqa</h3>
+        <a href="#" data-telegram hidden>Telegram</a>
+        <a href="shartlar.html">Foydalanish shartlari</a>
+        <a href="maxfiylik.html">Maxfiylik siyosati</a>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© <span id="year">2026</span> Prompt injenering kursi. Barcha huquqlar himoyalangan.</p>
+      <p class="footer__pay"><span class="footer__dot"></span> Payme orqali xavfsiz to'lov</p>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+</body>
+</html>

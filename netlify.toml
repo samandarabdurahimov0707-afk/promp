@@ -1,0 +1,106 @@
+# ==========================================================================
+# Netlify sozlamalari — Prompt injenering kursi
+# Loyha build talab qilmaydi: statik fayllar shundayligicha joylanadi.
+# ==========================================================================
+
+[build]
+  publish = "."
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Netlify Functions (Payme webhook, kirish huquqi, admin)
+[functions]
+  directory = "netlify/functions"
+
+# /api/* → /.netlify/functions/*
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Qulay qisqa manzillar
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 301
+
+[[redirects]]
+  from = "/shartlar"
+  to = "/shartlar.html"
+  status = 301
+
+[[redirects]]
+  from = "/maxfiylik"
+  to = "/maxfiylik.html"
+  status = 301
+
+# --------------------------------------------------------------------------
+# Xavfsizlik header'lari
+# --------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://i.ytimg.com; media-src 'self' blob: https://*.mediadelivery.net; frame-src https://www.youtube-nocookie.com https://iframe.mediadelivery.net; connect-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'none'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests"
+
+# Admin sahifa qidiruv tizimlariga yopilgan
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# API javoblari hech qachon keshlanmaydi
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store"
+    X-Robots-Tag = "noindex, nofollow"
+
+# Service worker har doim yangilanadi
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+# HTML — har safar qayta tekshiriladi
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Video fayllar uzoq muddat keshlanadi
+[[headers]]
+  for = "/videos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# CSS va JS — o'zgarish darhol ko'rinishi uchun qayta tekshiriladi
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Rasmlar va manifest
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Content-Type = "application/manifest+json"

@@ -1,0 +1,9 @@
+# Prompt injenering kursi
+# Domenni o'zgartirsangiz, sitemap manzilini ham yangilang.
+
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+Sitemap: https://SAYTINGIZ.netlify.app/sitemap.xml

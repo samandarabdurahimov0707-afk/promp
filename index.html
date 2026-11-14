@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prompt injenering kursi — AI bilan ishlashni o'rganing</title>
+  <meta name="description" content="Prompt injenering kursi: sun'iy intellekt bilan ishlashni o'rgatuvchi amaliy video darslar. Kirish va 1–3-darslar bepul, to'liq kurs 20 000 so'm. Payme orqali bir zumda ochiladi." />
+  <meta name="keywords" content="prompt injenering, sun'iy intellekt, AI kursi, ChatGPT, o'zbek tilida kurs, video darslar" />
+  <meta name="author" content="Prompt injenering kursi" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0a0c12" />
+  <link rel="canonical" href="https://SAYTINGIZ.netlify.app/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="uz_UZ" />
+  <meta property="og:site_name" content="Prompt injenering kursi" />
+  <meta property="og:title" content="Prompt injenering kursi — AI bilan ishlashni o'rganing" />
+  <meta property="og:description" content="Amaliy video darslar: prompt tuzilishi, few-shot, chain-of-thought va real loyihalar. Kirish va 3 dars bepul." />
+  <meta property="og:url" content="https://SAYTINGIZ.netlify.app/" />
+  <meta property="og:image" content="https://SAYTINGIZ.netlify.app/img/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Prompt injenering kursi" />
+  <meta name="twitter:description" content="AI bilan ishlashni o'rgatuvchi amaliy video kurs. Kirish va 3 dars bepul." />
+  <meta name="twitter:image" content="https://SAYTINGIZ.netlify.app/img/og.png" />
+
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "Prompt injenering kursi",
+    "description": "Sun'iy intellekt bilan ishlashni o'rgatuvchi amaliy video kurs: prompt tuzilishi, few-shot, chain-of-thought va real loyihalar.",
+    "inLanguage": "uz",
+    "provider": {
+      "@type": "Organization",
+      "name": "Prompt injenering kursi",
+      "url": "https://SAYTINGIZ.netlify.app/"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "20000",
+      "priceCurrency": "UZS",
+      "availability": "https://schema.org/InStock",
+      "url": "https://SAYTINGIZ.netlify.app/#narx"
+    },
+    "hasCourseInstance": {
+      "@type": "CourseInstance",
+      "courseMode": "online",
+      "courseWorkload": "PT2H"
+    }
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Asosiy kontentga o'tish</a>
+
+  <header class="navbar">
+    <div class="navbar__inner">
+      <a class="brand" href="#top" aria-label="Prompt injenering kursi — bosh sahifa">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg>
+        </span>
+        <span class="brand__text">Prompt injenering kursi</span>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Menyuni ochish">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="nav" id="nav-menu" aria-label="Asosiy menyu">
+        <a class="nav__link" href="#videolar">Videolar</a>
+        <a class="nav__link" href="#kurs-haqida">Kurs haqida</a>
+        <a class="nav__link" href="#narx">Narx</a>
+        <a class="nav__link" href="#faq">FAQ</a>
+        <button class="nav__account" id="account-btn" type="button" aria-haspopup="dialog" aria-controls="auth">Kirish</button>
+        <a class="nav__cta" href="#videolar">Boshlash</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero__content">
+        <p class="eyebrow"><span class="eyebrow__dot"></span> Amaliy AI kursi · O'zbek tilida</p>
+        <h1>Prompt injenering <span class="grad">kursi</span></h1>
+        <p class="hero__lead">
+          Sun'iy intellektdan aniq va sifatli natija olishni o'rganing.
+          Har bir dars — qisqa video va amaliy misollar. O'zingizga qulay
+          vaqtda, o'z sur'atingizda tomosha qiling.
+        </p>
+
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#videolar" id="hero-start">
+            Bepul darslardan boshlash
+          </a>
+          <button class="btn btn--ghost" id="hero-buy" type="button" data-buy>
+            Kursni ochish — <span data-price>20 000 so'm</span>
+          </button>
+        </div>
+
+        <div class="hero__stats">
+          <div class="stat">
+            <strong id="stat-count">0</strong>
+            <span>video dars</span>
+          </div>
+          <div class="stat">
+            <strong id="stat-free">0</strong>
+            <span>bepul dars</span>
+          </div>
+          <div class="stat">
+            <strong id="stat-price">20 000 so'm</strong>
+            <span>to'liq kurs</span>
+          </div>
+          <div class="stat">
+            <strong>Umrbod</strong>
+            <span>kirish huquqi</span>
+          </div>
+        </div>
+
+        <div class="hero__progress" id="hero-progress">
+          <div class="hero__progress-head">
+            <span>Tugallangan: <strong id="hero-progress-text">0 / 0</strong></span>
+            <button class="link-btn" id="resume-btn" type="button">Davom etish →</button>
+          </div>
+          <div class="progress" role="progressbar" aria-label="Kurs jarayoni" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="hero-progress-wrap">
+            <span id="hero-progress-bar" style="width: 0%"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__visual" aria-hidden="true">
+        <div class="mock">
+          <div class="mock__top">
+            <span class="mock__dots"><i></i><i></i><i></i></span>
+            <span class="mock__tag">video dars</span>
+          </div>
+          <div class="mock__screen">
+            <span class="mock__num">01</span>
+            <span class="mock__play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+            <span class="mock__ring"></span>
+          </div>
+          <div class="mock__meta">
+            <div>
+              <strong>Prompt injeneringga kirish</strong>
+              <span>1-dars · 08:24</span>
+            </div>
+            <span class="mock__lock">
+              <svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm-3 7V7a3 3 0 1 1 6 0v2H9Z" /></svg>
+            </span>
+          </div>
+          <div class="mock__bar"><span></span></div>
+        </div>
+        <span class="float float--1">✓ Kirish + 3 dars bepul</span>
+        <span class="float float--2">⚡ Payme bilan avtomatik</span>
+        <span class="float float--3">AI · amaliyot</span>
+      </div>
+    </section>
+
+    <section class="trust" aria-label="Kurs afzalliklari">
+      <span>✓ O'zbek tilida</span>
+      <span>✓ Amaliy misollar</span>
+      <span>✓ O'z sur'atingizda</span>
+      <span>✓ Umrbod kirish</span>
+      <span>✓ Xavfsiz to'lov</span>
+    </section>
+
+    <section class="section" id="kurs-haqida">
+      <div class="section__head">
+        <p class="eyebrow">Nega bu kurs?</p>
+        <h2 class="section__title">Natijaga olib boradigan <span class="grad">tizimli yondashuv</span></h2>
+        <p class="section__lead">
+          Tasodifiy savollar berishni bas qiling. Har bir darsda promptning
+          aniq tuzilishi, mantiqi va amaliy qo'llanishini ko'rsatamiz.
+        </p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature">
+          <span class="feature__icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.4 1.2 4.5 3 5.7V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3c1.8-1.2 3-3.3 3-5.7a7 7 0 0 0-7-7Zm-2 19h4" /></svg>
+          </span>
+          <h3>AI bilan aniq muloqot</h3>
+          <p>Modelga nima xohlashingizni aniq tushuntirish — vaqtni tejaydi va natijani yaxshilaydi.</p>
+        </article>
+
+        <article class="feature">
+          <span class="feature__icon">
+            <svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h10M4 19h7" /></svg>
+          </span>
+          <h3>Prompt anatomiyasi</h3>
+          <p>Rol, vazifa, kontekst va format. Kuchli promptning to'rt asosiy qismini amalda o'rganasiz.</p>
+        </article>
+
+        <article class="feature">
+          <span class="feature__icon">
+            <svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8" /></svg>
+          </span>
+          <h3>Few-shot va zero-shot</h3>
+          <p>Misol bermasdan va misollar bilan ishlash farqini real vazifalarda ko'rasiz.</p>
+        </article>
+
+        <article class="feature">
+          <span class="feature__icon">
+            <svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z" /></svg>
+          </span>
+          <h3>Bosqichma-bosqich fikrlash</h3>
+          <p>Chain-of-thought yordamida murakkab masalalarni model bilan birga yeching.</p>
+        </article>
+
+        <article class="feature">
+          <span class="feature__icon">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 8h8v8H8z" /></svg>
+          </span>
+          <h3>Amaliy loyiha</h3>
+          <p>O'rganilgan usullarni bitta real vazifada birlashtirib, tayyor natija olasiz.</p>
+        </article>
+
+        <article class="feature">
+          <span class="feature__icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2 3 7v6c0 5 3.8 8.4 9 9 5.2-.6 9-4 9-9V7l-9-5Z" /></svg>
+          </span>
+          <h3>Umrbod kirish</h3>
+          <p>Bir marta to'lov — barcha darslar va kelajakdagi yangilanishlar uchun doimiy kirish.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="natijalar">
+      <div class="split">
+        <div class="split__content">
+          <p class="eyebrow">Kursdan keyin</p>
+          <h2 class="section__title">Nima qila <span class="grad">olasiz?</span></h2>
+          <p class="section__lead">
+            Kurs oxirida siz shunchaki "yaxshi prompt" yozishni emas, balki
+            har qanday vazifa uchun tizimli yechim qurishni bilasiz.
+          </p>
+
+          <ul class="checklist">
+            <li>Aniq va batafsil promptlarni mustaqil tuzasiz.</li>
+            <li>Model javobini kerakli formatga keltirasiz.</li>
+            <li>Murakkab vazifalarni bosqichlarga bo'lasiz.</li>
+            <li>Misollar bilan model xatosini kamaytirasiz.</li>
+            <li>AI yordamida kontent va g'oyalar yaratasiz.</li>
+            <li>Natijani baholab, promptni yaxshilaysiz.</li>
+          </ul>
+        </div>
+
+        <div class="split__visual" aria-hidden="true">
+          <div class="quote-card">
+            <span class="quote-card__mark">“</span>
+            <p>Yaxshi prompt — bu sehr emas. Bu aniq tuzilma, kontekst va tekshiriladigan natija.</p>
+            <span class="quote-card__author">Kursning asosiy tamoyili</span>
+          </div>
+          <div class="quote-card quote-card--small">
+            <strong>3 qadam</strong>
+            <span>Vazifa → Kontekst → Format</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section catalog" id="videolar">
+      <div class="section__head section__head--row">
+        <div>
+          <p class="eyebrow">Kurs dasturi</p>
+          <h2 class="section__title">Video darslar</h2>
+          <p class="section__lead">
+            Kirish darsi va 1–3-darslar bepul. Qolganlarini bir marta to'lov bilan oching.
+          </p>
+        </div>
+
+        <label class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.2-3.2" />
+          </svg>
+          <input id="search" type="search" placeholder="Darslarni qidirish..." autocomplete="off" aria-label="Darslarni qidirish" />
+        </label>
+      </div>
+
+      <div class="catalog__tools">
+        <div class="chips" role="group" aria-label="Darslarni filtrlash">
+          <button class="chip is-active" type="button" data-filter="all" aria-pressed="true">Barchasi</button>
+          <button class="chip" type="button" data-filter="free" aria-pressed="false">Bepul</button>
+          <button class="chip" type="button" data-filter="paid" aria-pressed="false">Pullik</button>
+        </div>
+        <span class="result-count" id="result-count" aria-live="polite">0 ta dars</span>
+      </div>
+
+      <div id="video-grid" class="grid" aria-live="polite"></div>
+      <p id="empty" class="empty" hidden>Hech narsa topilmadi. Boshqa so'z bilan qidirib ko'ring.</p>
+    </section>
+
+    <section class="section" id="kim-uchun">
+      <div class="section__head">
+        <p class="eyebrow">Kim uchun?</p>
+        <h2 class="section__title">Kurs aynan <span class="grad">siz uchun</span>, agar...</h2>
+      </div>
+
+      <div class="audience-grid">
+        <article class="audience">
+          <span class="audience__num">01</span>
+          <h3>Boshlovchilar</h3>
+          <p>AI bilan tanishmoqchi, lekin qayerdan boshlashni bilmayotganlar uchun.</p>
+        </article>
+        <article class="audience">
+          <span class="audience__num">02</span>
+          <h3>Mutaxassislar</h3>
+          <p>Ish jarayonida AI yordamidan samaraliroq foydalanmoqchi bo'lganlar uchun.</p>
+        </article>
+        <article class="audience">
+          <span class="audience__num">03</span>
+          <h3>Kontent mualliflari</h3>
+          <p>Matn, g'oya va vizual kontentni tezroq va sifatliroq yaratmoqchi bo'lganlar uchun.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="narx">
+      <div class="pricing">
+        <div class="pricing__info">
+          <p class="eyebrow">To'lov</p>
+          <h2 class="section__title">Bitta to'lov. <span class="grad">To'liq kirish.</span></h2>
+          <p class="section__lead">
+            Yashirin to'lovlar yo'q. Kursni bir marta oching va barcha
+            darslardan cheklovsiz foydalaning.
+          </p>
+
+          <ul class="checklist checklist--compact">
+            <li>Barcha video darslar</li>
+            <li>Kelajakdagi yangilanishlar</li>
+            <li>Umrbod kirish huquqi</li>
+            <li>Payme orqali xavfsiz to'lov</li>
+          </ul>
+        </div>
+
+        <div class="pricing__card">
+          <span class="pricing__badge">To'liq kurs</span>
+          <div class="pricing__price"><span data-price>20 000 so'm</span></div>
+          <p class="pricing__note">Bir martalik to'lov · so'mda</p>
+
+          <button class="btn btn--primary btn--block" type="button" data-buy>
+            Payme orqali to'lash
+          </button>
+          <p class="pricing__auto">
+            To'lov avtomatik tasdiqlanadi — darslar darhol ochiladi.
+          </p>
+
+          <div class="pricing__divider"><span>yoki</span></div>
+          <p class="pricing__small">
+            Karta o'tkazmasi ham mavjud. To'lov oynasida karta raqami va
+            shaxsiy kod ko'rsatiladi.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="section__head">
+        <p class="eyebrow">Savol-javob</p>
+        <h2 class="section__title">Ko'p so'raladigan <span class="grad">savollar</span></h2>
+      </div>
+
+      <div class="faq">
+        <details class="faq__item">
+          <summary>To'lov qanday amalga oshiriladi?</summary>
+          <p>Payme orqali bir marta to'lov qilasiz. To'lov o'tishi bilan darslar avtomatik ochiladi — hech kimni kutish shart emas.</p>
+        </details>
+        <details class="faq__item">
+          <summary>Qancha vaqt kirish huquqi saqlanadi?</summary>
+          <p>Kirish huquqi umrbod. Bir marta to'laganingizdan keyin barcha darslar va kelajakdagi yangilanishlar siz uchun ochiq qoladi.</p>
+        </details>
+        <details class="faq__item">
+          <summary>Karta orqali to'lasam nima bo'ladi?</summary>
+          <p>To'lov oynasida karta raqami va shaxsiy kod ko'rsatiladi. To'lovni amalga oshirib, kodni kurs egasiga yuborasiz. Tasdiqlangach darslar ochiladi.</p>
+        </details>
+        <details class="faq__item">
+          <summary>Ro'yxatdan o'tish shartmi?</summary>
+          <p>Bepul darslar uchun shart emas. 4-darsdan boshlab pullik darslarni ochish uchun hisobingizga kirishingiz yoki ro'yxatdan o'tishingiz kerak. To'lov hisobingizga bog'lanadi.</p>
+        </details>
+        <details class="faq__item">
+          <summary>Boshqa qurilmada ham ochiladimi?</summary>
+          <p>Ha. Hisobingizga kirgan holda istalgan qurilmada darslarni ochishingiz mumkin. Bepul darslar hisobsiz ham ochiq.</p>
+        </details>
+        <details class="faq__item">
+          <summary>Videolarni yuklab olsam bo'ladimi?</summary>
+          <p>Darslar onlayn tomosha uchun mo'ljallangan. Video materiallarni tarqatish yoki qayta sotish taqiqlanadi.</p>
+        </details>
+        <details class="faq__item">
+          <summary>Savolim bo'lsa kimga murojaat qilaman?</summary>
+          <p>To'lov yoki kirish bo'yicha savollaringizni Telegram orqali yuborishingiz mumkin. Aloqa havolasi sayt pastki qismida.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="cta">
+        <div>
+          <p class="eyebrow">Bugun boshlang</p>
+          <h2 class="cta__title">AI bilan ishlashning yangi darajasiga chiqing</h2>
+          <p class="cta__lead">Bepul darslardan boshlang. Yoqsa — to'liq kursni bir marta oching.</p>
+        </div>
+        <div class="cta__actions">
+          <a class="btn btn--primary" href="#videolar">Bepul boshlash</a>
+          <button class="btn btn--ghost" type="button" data-buy>Kursni ochish</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <a class="brand" href="#top">
+          <span class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg>
+          </span>
+          <span class="brand__text">Prompt injenering kursi</span>
+        </a>
+        <p>Sun'iy intellekt bilan ishlashni o'rgatuvchi amaliy video kurs.</p>
+      </div>
+
+      <nav class="footer__col" aria-label="Sahifalar">
+        <h3>Sahifalar</h3>
+        <a href="#videolar">Videolar</a>
+        <a href="#kurs-haqida">Kurs haqida</a>
+        <a href="#narx">Narx</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <div class="footer__col">
+        <h3>Aloqa</h3>
+        <a href="#" data-telegram hidden>Telegram</a>
+        <a href="shartlar.html">Foydalanish shartlari</a>
+        <a href="maxfiylik.html">Maxfiylik siyosati</a>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© <span id="year">2026</span> Prompt injenering kursi. Barcha huquqlar himoyalangan.</p>
+      <p class="footer__pay"><span class="footer__dot"></span> Payme orqali xavfsiz to'lov</p>
+    </div>
+  </footer>
+
+  <div class="player" id="player" hidden>
+    <div class="player__backdrop" data-close></div>
+
+    <div class="player__dialog" role="dialog" aria-modal="true" aria-labelledby="player-title">
+      <button class="player__close" id="player-close" type="button" aria-label="Yopish">&times;</button>
+      <div class="player__frame" id="player-frame"></div>
+      <div class="player__info">
+        <div class="player__info-text">
+          <h3 id="player-title"></h3>
+          <p id="player-desc"></p>
+        </div>
+        <button class="player__done" id="player-done" type="button">Tugallandi deb belgilash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- To'lov oynasi -->
+  <div class="paywall" id="paywall" hidden>
+    <div class="paywall__backdrop" data-paywall-close></div>
+
+    <div class="paywall__dialog" role="dialog" aria-modal="true" aria-labelledby="paywall-title">
+      <button class="paywall__close" id="paywall-close" type="button" aria-label="Yopish">&times;</button>
+
+      <span class="paywall__badge">To'liq kurs</span>
+      <h3 id="paywall-title">4-darsdan boshlab — pullik</h3>
+      <p class="paywall__lead">
+        Kirish va 1–3-darslar bepul. Qolgan darslarni ochish uchun bir marta to'lov qiling.
+      </p>
+
+      <div class="paywall__price" id="paywall-price">20 000 so'm</div>
+
+      <button class="paywall__btn paywall__btn--payme" id="paywall-payme" type="button" hidden>
+        Payme orqali to'lash
+      </button>
+      <p class="paywall__auto" id="paywall-auto-note" hidden>
+        To'lov avtomatik tasdiqlanadi — darslar darhol ochiladi.
+      </p>
+
+      <div class="paywall__or" id="paywall-or" hidden><span>yoki karta orqali</span></div>
+
+      <details class="paywall__manual" id="paywall-manual">
+        <summary class="paywall__manual-summary">Karta orqali o'tkazma (qo'lda tasdiqlash)</summary>
+
+        <div class="paywall__manual-body">
+          <div class="paywall__card">
+            <span class="paywall__card-label">Karta raqami</span>
+            <div class="paywall__card-row">
+              <strong id="paywall-card">9860 0121 3217 2771</strong>
+              <button class="paywall__copy" id="paywall-copy" type="button">Nusxalash</button>
+            </div>
+            <span class="paywall__card-holder" id="paywall-holder" hidden></span>
+          </div>
+
+          <ol class="paywall__steps">
+            <li>Yuqoridagi kartaga <strong id="paywall-amount">20 000 so'm</strong> o'tkazing.</li>
+            <li>To'lov izohida kodingizni yozing: <strong class="paywall__code" id="paywall-code">—</strong></li>
+            <li>Chekni yuboring va tasdiqlanishini kuting.</li>
+          </ol>
+
+          <a class="paywall__btn" id="paywall-telegram" href="#" target="_blank" rel="noopener" hidden>Chekni Telegramga yuborish</a>
+        </div>
+      </details>
+
+      <button class="paywall__btn paywall__btn--ghost" id="paywall-check" type="button">Holatni tekshirish</button>
+
+      <p class="paywall__status" id="paywall-status" aria-live="polite"></p>
+      <p class="paywall__note">
+        Payme orqali to'lov odatda bir zumda tasdiqlanadi. Karta o'tkazmasida
+        tasdiqlash qo'lda amalga oshiriladi. Sahifani yopib, keyinroq
+        qaytsangiz ham kirishingiz saqlanadi.
+      </p>
+    </div>
+  </div>
+
+  <!-- Hisob: ro'yxatdan o'tish / kirish -->
+  <div class="auth" id="auth" hidden>
+    <div class="auth__backdrop" data-auth-close></div>
+
+    <div class="auth__dialog" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <button class="auth__close" id="auth-close" type="button" aria-label="Yopish">&times;</button>
+
+      <span class="auth__badge">Hisob</span>
+      <h3 id="auth-title">Hisobingizga kiring</h3>
+      <p class="auth__lead" id="auth-lead">
+        Pullik darslarni ochish uchun hisob kerak. Bepul darslar hisobsiz ham ochiq.
+      </p>
+
+      <div class="auth__tabs" id="auth-tabs" role="tablist" aria-label="Kirish yoki ro'yxatdan o'tish">
+        <button class="auth__tab is-active" id="auth-tab-login" type="button" role="tab" aria-selected="true" aria-controls="auth-login-form" data-auth-tab="login">Kirish</button>
+        <button class="auth__tab" id="auth-tab-register" type="button" role="tab" aria-selected="false" aria-controls="auth-register-form" data-auth-tab="register">Ro'yxatdan o'tish</button>
+      </div>
+
+      <form class="auth__form" id="auth-login-form" novalidate>
+        <label class="auth__field">
+          <span>Email</span>
+          <input id="auth-login-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="siz@example.com" required />
+        </label>
+        <label class="auth__field">
+          <span>Parol</span>
+          <input id="auth-login-password" name="password" type="password" autocomplete="current-password" placeholder="Parolingiz" required />
+        </label>
+        <button class="auth__submit" id="auth-login-submit" type="submit">Kirish</button>
+      </form>
+
+      <form class="auth__form" id="auth-register-form" novalidate hidden>
+        <label class="auth__field">
+          <span>Ism</span>
+          <input id="auth-register-name" name="name" type="text" autocomplete="name" placeholder="Ismingiz" maxlength="80" required />
+        </label>
+        <label class="auth__field">
+          <span>Email</span>
+          <input id="auth-register-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="siz@example.com" maxlength="254" required />
+        </label>
+        <label class="auth__field">
+          <span>Parol</span>
+          <input id="auth-register-password" name="password" type="password" autocomplete="new-password" placeholder="Kamida 8 ta belgi" minlength="8" required />
+        </label>
+        <button class="auth__submit" id="auth-register-submit" type="submit">Ro'yxatdan o'tish</button>
+      </form>
+
+      <p class="auth__status" id="auth-status" role="status" aria-live="polite"></p>
+
+      <div class="auth__account" id="auth-account" hidden>
+        <div class="auth__profile">
+          <span class="auth__avatar" id="auth-avatar" aria-hidden="true">?</span>
+          <div>
+            <strong id="auth-name"></strong>
+            <span id="auth-email"></span>
+          </div>
+        </div>
+        <p class="auth__paid" id="auth-paid">Bepul darslar ochiq</p>
+        <button class="auth__submit auth__submit--ghost" id="auth-logout" type="button">Chiqish</button>
+      </div>
+
+      <p class="auth__note">
+        Hisob qurilmalar orasida ishlaydi. Parol scrypt bilan xeshlanadi va
+        hech qachon ochiq saqlanmaydi.
+      </p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- ====================================================================
+       VIDEOLAR RO'YXATI
+       --------------------------------------------------------------------
+       Yangi video qo'shish uchun quyidagi <video> teglaridan birini nusxa
+       ko'chirib, ro'yxat oxiriga qo'shing. Har bir yangi teg = bitta yangi
+       kartochka, yuqoridagi hisoblagich ham avtomatik bittaga oshadi.
+
+       Maydonlar:
+         src               — video fayl yo'li: "videos/01-dars.mp4"
+         poster            — muqova rasmi (ixtiyoriy)
+         data-title        — dars nomi (majburiy)
+         data-description  — qisqa tavsif (ixtiyoriy)
+         data-duration     — davomiylik, masalan "12:40" (ixtiyoriy)
+         data-youtube      — YouTube havolasi (src o'rniga ishlatiladi)
+         data-paid         — "true" bo'lsa, dars pullik hisoblanadi
+         data-free         — "true" bo'lsa, dars bepul (data-paid-from'ni bekor qiladi)
+         data-bunny        — Bunny Stream video ID (ixtiyoriy, xavfsiz hosting)
+
+       4-darsdan boshlab barcha darslar avtomatik pullik bo'ladi
+       (data-paid-from="4"). Yangi dars qo'shsangiz, alohida belgi shart emas.
+
+       Bir nechta format kerak bo'lsa, src o'rniga ichiga <source> qo'shing:
+         <video data-title="1-dars">
+           <source src="videos/01-dars.mp4"  type="video/mp4">
+           <source src="videos/01-dars.webm" type="video/webm">
+         </video>
+
+       YouTube namunasi:
+         <video data-youtube="https://youtu.be/VIDEO_ID"
+                data-title="1-dars. Kirish"></video>
+       ==================================================================== -->
+  <div id="video-tags" hidden aria-hidden="true" data-paid-from="4">
+
+    <!-- Sizning videongiz -->
+    <video preload="none"
+           src="videos/8_daqiqada_AI_dan_to_g_ri_foydalanishni_o_rganasiz_eqCHHQoxUeo.mp4"
+           poster="img/poster-intro.svg"
+           data-title="Kirish. AI'dan to'g'ri foydalanish"
+           data-description="8 daqiqada sun'iy intellektdan to'g'ri foydalanishni o'rganamiz."
+           data-duration=""></video>
+
+    <video preload="none"
+           src="videos/promp-nima-web.mp4"
+           poster="img/poster-ai.svg"
+           data-title="1-dars. Prompt injeneringga kirish"
+           data-description="Prompt nima, nega muhim va sun'iy intellekt bilan muloqot qanday ishlaydi."
+           data-duration=""></video>
+
+    <video preload="none"
+           src="videos/Promptda_Rol_va_Kontekst_qanday_yoziladi_AI_Prompt_Engineering_2.mp4"
+           data-title="2-dars. Yaxshi prompt tuzilishi"
+           data-description="Rol, vazifa, kontekst va format — kuchli promptning to'rt asosiy qismi."
+           data-duration=""></video>
+
+    <video preload="none"
+           src="videos/1_daqiqada_tayyor_prompt_meta-prompt_bilan_2026-uDJw5nIvHlk.mp4"
+           data-title="3-dars. Zero-shot va few-shot prompting"
+           data-description="Misol bermasdan va misollar bilan so'rov yuborish farqi amalda."
+           data-duration=""></video>
+
+    <video preload="none"
+           src=""
+           data-title="4-dars. Chain-of-thought: bosqichma-bosqich fikrlash"
+           data-description="Murakkab masalalarni modelga bosqichlarga bo'lib yechtirish usuli."
+           data-duration=""
+           data-paid="true"></video>
+
+    <video preload="none"
+           src=""
+           data-title="5-dars. Amaliy loyha"
+           data-description="O'rganilgan usullarni bitta real vazifada birlashtirib qo'llaymiz."
+           data-duration=""
+           data-paid="true"></video>
+
+  </div>
+
+  <noscript>
+    <p style="padding: 20px; text-align: center; color: #eef2f9; background: #121826;">
+      Saytdan foydalanish uchun brauzerda JavaScript yoqilgan bo'lishi kerak.
+    </p>
+  </noscript>
+
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

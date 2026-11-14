@@ -1,0 +1,8 @@
+node_modules/
+.env
+.env.local
+.netlify/
+.idea/
+
+# Katta original video repoga kirmaydi; sayt siqilgan nusxani ishlatadi.
+videos/promp-nima.mp4
