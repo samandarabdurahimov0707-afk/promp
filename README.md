@@ -412,8 +412,10 @@ beradi (`/api/bunny-token`).
   uchun Bunny Stream yoki YouTube ishlating.
 - Funksiyalar serverless — IP rate limit har bir instansiya xotirasida ishlaydi;
   katta yuklamada qo'shimcha himoya (masalan, Netlify WAF) tavsiya etiladi.
-- Netlify Blobs production'da `NETLIFY_BLOBS_CONTEXT` bilan ishlaydi; lokalda
-  xotira ishlatiladi.
+- Netlify Blobs production'da `NETLIFY_BLOBS_CONTEXT` bilan ishlaydi. Agar bu
+  o'zgaruvchi funksiyalarga berilmasa, `SITE_ID` va `NETLIFY_BLOBS_TOKEN`
+  (Netlify personal access token) qo'shiladi — kod ular bilan qo'lda sozlanadi.
+  Lokalda xotira ishlatiladi.
 
 ## Muammolarni bartaraf etish
 
@@ -422,6 +424,7 @@ beradi (`/api/bunny-token`).
 | Payme tugmasi ko'rinmaydi | `PAYME_MERCHANT_ID` to'ldirilganmi (`/api/config`) |
 | Payme `-32504` qaytaradi | `PAYME_KEY` va `Basic` header to'g'riligi |
 | To'lovdan keyin darslar ochilmadi | `/api/health`, Payme webhook manzili, Blobs ishlashi |
+| `/api/health` da `"blobs": false` | `NETLIFY_BLOBS_TOKEN` va `SITE_ID` mavjudmi; tokenni yangilab qayta deploy qiling |
 | Admin panelda «Maxfiy kalit noto'g'ri» | `ADMIN_SECRET` ≥16 belgi va Netlify'da saqlanganmi |
 | «Hisob tizimi sozlanmagan» | `ACCESS_SECRET` ≥16 belgi; lokalda `.env` + serverni qayta ishga tushirish; Netlify'da env qo'shib, qayta deploy |
 | Kirish huquqi berilmayapti | `ACCESS_SECRET` ≥16 belgi |
