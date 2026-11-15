@@ -6,7 +6,7 @@
    - /api/* va /videos/* hech qachon keshlanmaydi.
    ========================================================================== */
 
-const CACHE = "prompt-kursi-v2";
+const CACHE = "prompt-kursi-v3";
 const SHELL = [
   "/",
   "/index.html",
