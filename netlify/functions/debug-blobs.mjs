@@ -1,47 +1,43 @@
 /* Vaqtinchalik diagnostika funksiyasi. Tekshiruvdan keyin o'chiriladi. */
 
 import { getStore } from "@netlify/blobs";
+import { blobsReady, read, write } from "../lib/store.mjs";
 
 export async function handler() {
-  const envKeys = Object.keys(process.env)
-    .filter((key) => /NETLIFY|BLOBS|SITE|AWS_LAMBDA|LAMBDA/i.test(key))
-    .sort();
+  const siteID = process.env.SITE_ID || process.env.NETLIFY_SITE_ID || "";
+  const token =
+    process.env.NETLIFY_BLOBS_TOKEN ||
+    process.env.NETLIFY_FUNCTIONS_TOKEN ||
+    "";
 
   const report = {
-    envKeys,
-    hasBlobsContext: Boolean(process.env.NETLIFY_BLOBS_CONTEXT),
-    siteIdPresent: Boolean(process.env.SITE_ID),
+    siteIdPresent: Boolean(siteID),
+    tokenPresent: Boolean(token),
+    blobsReady: await blobsReady(),
     storeError: null,
-    writeError: null,
-    readError: null,
     roundTrip: null
   };
 
-  let store = null;
-
   try {
-    store = getStore({ name: "prompt-kursi", consistency: "strong" });
-    report.storeOk = true;
+    const store = getStore({
+      name: "prompt-kursi",
+      consistency: "strong",
+      siteID,
+      token
+    });
+
+    const key = "debug/" + Date.now();
+    await store.setJSON(key, { ok: true, at: Date.now() });
+    report.roundTrip = await store.get(key, { type: "json" });
   } catch (error) {
     report.storeError = String(error && error.message);
   }
 
-  if (store) {
-    const key = "debug/" + Date.now();
-
-    try {
-      await store.setJSON(key, { ok: true, at: Date.now() });
-      report.writeOk = true;
-    } catch (error) {
-      report.writeError = String(error && error.message);
-    }
-
-    try {
-      const value = await store.get(key, { type: "json" });
-      report.roundTrip = value;
-    } catch (error) {
-      report.readError = String(error && error.message);
-    }
+  try {
+    await write("debug/layer", { via: "store.mjs", at: Date.now() });
+    report.layerRead = await read("debug/layer");
+  } catch (error) {
+    report.layerError = String(error && error.message);
   }
 
   return {

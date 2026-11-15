@@ -6,6 +6,8 @@
    deploydan keyingi tekshiruv uchun ishlatiladi.
    ========================================================================== */
 
+import { blobsReady } from "../lib/store.mjs";
+
 function bool(value) {
   return Boolean(value);
 }
@@ -29,7 +31,7 @@ export async function handler(event) {
     paymeMerchantId: bool(String(process.env.PAYME_MERCHANT_ID || "").trim()),
     paymeKey: String(process.env.PAYME_KEY || "").length >= 8,
     telegram: bool(String(process.env.PAYMENT_TELEGRAM || "").trim()),
-    blobs: bool(process.env.NETLIFY_BLOBS_CONTEXT)
+    blobs: await blobsReady()
   };
 
   const ok =

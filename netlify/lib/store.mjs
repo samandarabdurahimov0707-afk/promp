@@ -1,18 +1,35 @@
 /* ==========================================================================
    Netlify Blobs uchun qulay qatlam.
    --------------------------------------------------------------------------
-   Netlify'da ishlaganda ma'lumotlar Blobs'da saqlanadi.
-   Lokal testda (NETLIFY_BLOBS_CONTEXT yo'q) xotirada saqlanadi.
+   Netlify'da ishlaganda ma'lumotlar Blobs'da saqlanadi. Kontekst
+   (`NETLIFY_BLOBS_CONTEXT`) berilmasa, `SITE_ID` + `NETLIFY_FUNCTIONS_TOKEN`
+   bilan qo'lda sozlanadi.
+   Lokal testda (na kontekst, na token) xotirada saqlanadi.
 
-   Production'da (NETLIFY_BLOBS_CONTEXT bor) xotiraga jimgina o'tib
-   ketmaymiz — xato yuz bersa, xato ko'tariladi va Payme so'rovni qayta
-   yuboradi. Shu bilan to'lov yozuvi yo'qolib qolmaydi.
+   Production'da (Blobs sozlangan) xotiraga jimgina o'tib ketmaymiz — xato
+   yuz bersa, xato ko'tariladi va Payme so'rovni qayta yuboradi. Shu bilan
+   to'lov yozuvi yo'qolib qolmaydi.
    ========================================================================== */
 
 import { getStore } from "@netlify/blobs";
 
 const memory = new Map();
-const strict = Boolean(process.env.NETLIFY_BLOBS_CONTEXT);
+
+/* Netlify funksiyalarda `NETLIFY_BLOBS_CONTEXT` har doim ham berilmaydi.
+   Bunday holatda `SITE_ID` va `NETLIFY_FUNCTIONS_TOKEN` bilan qo'lda
+   sozlaymiz — bu Netlify tomonidan tavsiya etilgan rasmiy usul. */
+function config() {
+  const siteID = process.env.SITE_ID || process.env.NETLIFY_SITE_ID || "";
+  const token =
+    process.env.NETLIFY_BLOBS_TOKEN ||
+    process.env.NETLIFY_FUNCTIONS_TOKEN ||
+    "";
+
+  return siteID && token ? { siteID, token } : null;
+}
+
+const production = Boolean(process.env.NETLIFY_BLOBS_CONTEXT || config());
+const strict = production;
 let store = null;
 let checked = false;
 
@@ -20,8 +37,14 @@ function blobs() {
   if (checked) return store;
   checked = true;
 
+  const manual = config();
+
   try {
-    store = getStore({ name: "prompt-kursi", consistency: "strong" });
+    store = getStore(
+      manual
+        ? { name: "prompt-kursi", consistency: "strong", ...manual }
+        : { name: "prompt-kursi", consistency: "strong" }
+    );
   } catch (error) {
     if (strict) throw error;
     store = null;
@@ -33,6 +56,19 @@ function blobs() {
 function failed(action, key, error) {
   console.error("Blobs " + action + " failed:", key, error && error.message);
   if (strict) throw error;
+}
+
+/* Health tekshiruvi uchun: saqlash qatlami haqiqatan ishlayaptimi. */
+export async function blobsReady() {
+  const s = blobs();
+  if (!s) return false;
+
+  try {
+    await s.get("health/ping");
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 export async function read(key) {
