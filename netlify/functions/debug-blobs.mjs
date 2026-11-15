@@ -1,7 +1,6 @@
 /* Vaqtinchalik diagnostika funksiyasi. Tekshiruvdan keyin o'chiriladi. */
 
-import { getStore } from "@netlify/blobs";
-import { blobsReady, read, write } from "../lib/store.mjs";
+import { getStore, getDeployStore } from "@netlify/blobs";
 
 export async function handler() {
   const siteID = process.env.SITE_ID || process.env.NETLIFY_SITE_ID || "";
@@ -11,11 +10,15 @@ export async function handler() {
     "";
 
   const report = {
+    allEnvKeys: Object.keys(process.env).sort(),
     siteIdPresent: Boolean(siteID),
-    tokenPresent: Boolean(token),
-    blobsReady: await blobsReady(),
-    storeError: null,
-    roundTrip: null
+    tokenSource: process.env.NETLIFY_BLOBS_TOKEN
+      ? "NETLIFY_BLOBS_TOKEN"
+      : process.env.NETLIFY_FUNCTIONS_TOKEN
+        ? "NETLIFY_FUNCTIONS_TOKEN"
+        : "none",
+    siteStore: null,
+    deployStore: null
   };
 
   try {
@@ -25,19 +28,24 @@ export async function handler() {
       siteID,
       token
     });
-
     const key = "debug/" + Date.now();
-    await store.setJSON(key, { ok: true, at: Date.now() });
-    report.roundTrip = await store.get(key, { type: "json" });
+    await store.setJSON(key, { ok: true });
+    report.siteStore = await store.get(key, { type: "json" });
   } catch (error) {
-    report.storeError = String(error && error.message);
+    report.siteStore = "ERROR: " + String(error && error.message);
   }
 
   try {
-    await write("debug/layer", { via: "store.mjs", at: Date.now() });
-    report.layerRead = await read("debug/layer");
+    const deploy = getDeployStore({
+      name: "prompt-kursi",
+      siteID,
+      token
+    });
+    const key = "debug/" + Date.now();
+    await deploy.setJSON(key, { ok: true });
+    report.deployStore = await deploy.get(key, { type: "json" });
   } catch (error) {
-    report.layerError = String(error && error.message);
+    report.deployStore = "ERROR: " + String(error && error.message);
   }
 
   return {
