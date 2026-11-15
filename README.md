@@ -364,6 +364,23 @@ Deploydan keyin:
 3. Admin panelda test buyurtma yaratib, ochish/bekor qilishni tekshiring.
 4. Payme kabinetida webhook manzilini va test to'lovni tasdiqlang.
 
+### Build limiti tugaganda (qo'lda deploy)
+
+Netlify bepul tarifida oylik build limiti tugasa, GitHub'dan avtomatik deploy
+`Skipped due to account credit usage exceeded` xabari bilan o'tkazib
+yuboriladi. Bunday holatda faqat ommaviy fayllardan iborat papka tayyorlab,
+CLI orqali joylash mumkin (o'zgarmagan videolar qayta yuklanmaydi):
+
+```bash
+# publish/ ichida faqat sayt fayllari bo'lsin:
+# html, css/, js/, img/, videos/, sw.js, robots.txt, sitemap.xml, manifest
+npx netlify deploy --dir=./publish --functions=./netlify/functions --prod
+```
+
+`.env`, `tests/`, `scripts/`, `netlify/` va `package.json` `publish/` ichiga
+**tushmasligi** kerak — aks holda ular ochiq ko'rinadi. `netlify.toml` bu
+yo'llarni 404 bilan to'sadi, lekin eng yaxshisi ularni umuman yubormaslik.
+
 ## Xavfsizlik
 
 - `PAYME_KEY`, `ADMIN_SECRET`, `ACCESS_SECRET` faqat serverda tekshiriladi va
@@ -416,6 +433,11 @@ beradi (`/api/bunny-token`).
   o'zgaruvchi funksiyalarga berilmasa, `SITE_ID` va `NETLIFY_BLOBS_TOKEN`
   (Netlify personal access token) qo'shiladi — kod ular bilan qo'lda sozlanadi.
   Lokalda xotira ishlatiladi.
+- **Bepul tarifda "Powered by Netlify" yorlig'i** har bir sahifaga
+  qo'shiladi. Uni sozlamalardan o'chirib bo'lmaydi — API
+  `Removing the Netlify badge is not available on this plan` (422) qaytaradi.
+  Yorliqni faqat tarifni ko'tarish yoki boshqa hostingga o'tish bilan olib
+  tashlash mumkin.
 
 ## Muammolarni bartaraf etish
 

@@ -36,6 +36,8 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 86px;
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -2689,6 +2691,72 @@ a.paywall__btn {
 
   .legal {
     padding: 44px 18px 70px;
+  }
+
+  /* --- Telefon masshtabi: sarlavha ixcham, matn yirikroq --- */
+  body {
+    font-size: 16px;
+  }
+
+  .hero h1 {
+    font-size: clamp(30px, 8.4vw, 38px);
+    line-height: 1.12;
+  }
+
+  .hero__lead {
+    font-size: 16.5px;
+    line-height: 1.65;
+  }
+
+  .card__desc {
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
+  .card__meta,
+  .result-count,
+  .link-btn,
+  .footer__brand p,
+  .footer__col a,
+  .footer__bottom {
+    font-size: 13.5px;
+  }
+
+  .footer__col h3 {
+    font-size: 12.5px;
+  }
+
+  .card__badge,
+  .pricing__badge,
+  .pricing__auto,
+  .pricing__small,
+  .pricing__note,
+  .eyebrow,
+  .quote-card__author {
+    font-size: 12.5px;
+  }
+
+  .mock__tag,
+  .float {
+    font-size: 12px;
+  }
+
+  .faq__item p {
+    font-size: 15px;
+  }
+
+  .nav__link {
+    font-size: 15px;
+  }
+
+  .chip {
+    min-height: 40px;
+    padding: 8px 14px;
+    font-size: 13.5px;
+  }
+
+  .btn {
+    min-height: 46px;
   }
 }
 
