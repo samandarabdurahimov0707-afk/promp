@@ -297,9 +297,9 @@ server.listen(port, host, function () {
     );
   }
 
-  if (String(process.env.ADMIN_SECRET || "").length < 16) {
+  if (String(process.env.ADMIN_SECRET || "").length < 8) {
     console.warn(
-      "OGOHLANTIRISH: ADMIN_SECRET yo'q yoki 16 belgidan qisqa. " +
+      "OGOHLANTIRISH: ADMIN_SECRET yo'q yoki 8 belgidan qisqa. " +
         "/admin.html ishlamaydi."
     );
   }

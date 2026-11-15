@@ -26,7 +26,7 @@ export async function handler(event) {
   }
 
   const checks = {
-    adminSecret: String(process.env.ADMIN_SECRET || "").length >= 16,
+    adminSecret: String(process.env.ADMIN_SECRET || "").length >= 8,
     accessSecret: String(process.env.ACCESS_SECRET || "").length >= 16,
     paymeMerchantId: bool(String(process.env.PAYME_MERCHANT_ID || "").trim()),
     paymeKey: String(process.env.PAYME_KEY || "").length >= 8,

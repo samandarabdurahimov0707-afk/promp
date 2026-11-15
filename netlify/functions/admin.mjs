@@ -14,7 +14,7 @@
    `revokeUser` — faqat email orqali berilgan ruxsatni bekor qiladi.
    --------------------------------------------------------------------------
    Environment variable:
-     ADMIN_SECRET — kamida 16 belgili tasodifiy maxfiy satr
+     ADMIN_SECRET — kamida 8 belgili maxfiy satr
    ========================================================================== */
 
 import crypto from "node:crypto";
@@ -53,7 +53,7 @@ function safeEqual(a, b) {
 
 function authorized(secret) {
   const expected = String(process.env.ADMIN_SECRET || "");
-  if (expected.length < 16) return false;
+  if (expected.length < 8) return false;
 
   return safeEqual(secret, expected);
 }

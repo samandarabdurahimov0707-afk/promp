@@ -229,7 +229,7 @@ o'chiriladi.
 | `PAYMENT_CARD_NUMBER` | zaxira usul | Karta raqami (`9860012132172771`) |
 | `PAYMENT_CARD_HOLDER` | yo'q | Karta egasining ismi |
 | `PAYMENT_TELEGRAM` | yo'q | Telegram username yoki havola (standart: `abay_pg`) |
-| `ADMIN_SECRET` | ha | Kamida **16 belgi**li tasodifiy satr (admin panel) |
+| `ADMIN_SECRET` | ha | Kamida **8 belgi**li maxfiy satr (admin panel) |
 | `ACCESS_SECRET` | ha | Kamida **16 belgi**li satr; bo'lmasa huquq berilmaydi |
 | `BUNNY_LIBRARY_ID` | yo'q | Bunny Stream kutubxonasi |
 | `BUNNY_TOKEN_KEY` | yo'q | Bunny Stream token kaliti |
@@ -425,7 +425,7 @@ beradi (`/api/bunny-token`).
 | Payme `-32504` qaytaradi | `PAYME_KEY` va `Basic` header to'g'riligi |
 | To'lovdan keyin darslar ochilmadi | `/api/health`, Payme webhook manzili, Blobs ishlashi |
 | `/api/health` da `"blobs": false` | `NETLIFY_BLOBS_TOKEN` va `SITE_ID` mavjudmi; tokenni yangilab qayta deploy qiling |
-| Admin panelda «Maxfiy kalit noto'g'ri» | `ADMIN_SECRET` ≥16 belgi va Netlify'da saqlanganmi |
+| Admin panelda «Maxfiy kalit noto'g'ri» | `ADMIN_SECRET` ≥8 belgi va Netlify'da saqlanganmi |
 | «Hisob tizimi sozlanmagan» | `ACCESS_SECRET` ≥16 belgi; lokalda `.env` + serverni qayta ishga tushirish; Netlify'da env qo'shib, qayta deploy |
 | Kirish huquqi berilmayapti | `ACCESS_SECRET` ≥16 belgi |
 | Ro'yxatdan o'tish 503 qaytaradi | `ACCESS_SECRET` o'rnatilganmi |
