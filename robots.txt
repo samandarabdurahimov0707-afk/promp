@@ -6,4 +6,4 @@ Allow: /
 Disallow: /admin.html
 Disallow: /api/
 
-Sitemap: https://SAYTINGIZ.netlify.app/sitemap.xml
+Sitemap: https://promp-injenering.netlify.app/sitemap.xml
