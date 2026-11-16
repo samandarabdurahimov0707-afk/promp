@@ -140,8 +140,9 @@ bo'ladi va yuqoridagi hisoblagich avtomatik oshadi. Qo'lda sanash shart emas.
 to'g'ridan-to'g'ri yuklash imkonini beradi. Ro'yxat Netlify Blobs'da saqlanadi
 va sayt `<video>` teglari o'rniga shu ro'yxatni ko'rsatadi.
 
-1. **Mavjud darslarni yuklash** — `index.html` dagi teglarni bir marta
-   ro'yxatga ko'chiradi (eski darslar yo'qolmasin).
+1. **Eski darslarni qo'shish** — `index.html` dagi teglarni ro'yxatga
+   **qo'shadi** (mavjud va yuklangan videolar o'chmaydi, takroriy darslar
+   qo'shilmaydi). Ro'yxat bo'sh bo'lsa, barcha eski darslar ko'chadi.
 2. **Video fayl** — MP4 tavsiya etiladi. Fayl 3 MB li bo'laklarda ketma-ket
    yuklanadi; sahifani yopmang. Maksimal hajm — **1 GB**.
 3. Har bir darsni **bepul/pullik** qilib belgilash, **↑ ↓** bilan tartiblash,
@@ -155,7 +156,8 @@ Muhim cheklovlar:
   bandwidth kvotasidan** sarflanadi. Katta auditoriya uchun Bunny Stream yoki
   tashqi CDN arzonroq bo'lishi mumkin.
 - Ro'yxat birinchi marta saqlanganda u `index.html` dagi teglardan ustun
-  turadi. Shu sabab avval **Mavjud darslarni yuklash** tugmasini bosing.
+  turadi. Shu sabab yangi dars qo'shishdan oldin **Eski darslarni qo'shish**
+  tugmasini bosing — aks holda sayt faqat yangi darsni ko'rsatadi.
 - Blobs ishlamasa (token yo'q/eskirgan), yuklash va oqim ishlamaydi;
   sayt esa avvalgidek `<video>` teglariga qaytadi.
 

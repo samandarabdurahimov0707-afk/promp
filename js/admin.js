@@ -853,7 +853,7 @@
         videosNote.textContent =
           "Diqqat: sayt hozir index.html dagi eski darslardan foydalanmoqda. " +
           "Bu ro'yxatga birinchi dars saqlanganda ular almashtiriladi — " +
-          "avval «Mavjud darslarni yuklash» tugmasini bosing.";
+          "avval «Eski darslarni qo'shish» tugmasini bosing.";
       } else {
         videosNote.hidden = true;
       }
@@ -1461,6 +1461,48 @@
 
   /* ------------------- index.html dagi darslarni ko'chirish ---------------- */
 
+  /* Darsni solishtirish kaliti: manba havolasi, bo'lmasa nomi. */
+  function videoKey(video) {
+    var src = String((video && video.src) || "").trim().toLowerCase();
+    if (src) return "src:" + src;
+
+    var title = String((video && video.title) || "").trim().toLowerCase();
+    if (title) return "title:" + title;
+
+    return "id:" + String((video && video.id) || "");
+  }
+
+  /*
+    index.html darslarini mavjud ro'yxatga qo'shadi.
+    Takroriy darslar qo'shilmaydi, mavjud (yuklangan) videolar saqlanadi.
+    Yangi darslar o'z o'rniga — oldingi darsdan keyin qo'yiladi.
+  */
+  function mergeVideos(current, incoming) {
+    var merged = current.slice();
+    var insertAt = 0;
+
+    incoming.forEach(function (video) {
+      var key = videoKey(video);
+      var found = -1;
+
+      for (var i = 0; i < merged.length; i += 1) {
+        if (videoKey(merged[i]) === key) {
+          found = i;
+          break;
+        }
+      }
+
+      if (found === -1) {
+        merged.splice(insertAt, 0, video);
+        insertAt += 1;
+      } else {
+        insertAt = found + 1;
+      }
+    });
+
+    return merged;
+  }
+
   function importVideos() {
     if (!state.secret) {
       handleUnauthorized();
@@ -1470,7 +1512,8 @@
     if (
       state.videos.length &&
       !window.confirm(
-        "Mavjud ro'yxat index.html dagi darslar bilan almashtirilsinmi?"
+        "index.html dagi darslar ro'yxatga qo'shiladi. Mavjud darslar va " +
+          "yuklangan videolar saqlanadi. Davom etilsinmi?"
       )
     ) {
       return;
@@ -1532,9 +1575,17 @@
 
         if (!videos.length) throw new Error("index.html da dars topilmadi");
 
+        var merged = mergeVideos(state.videos, videos);
+        var added = merged.length - state.videos.length;
+
+        if (!added) {
+          videoMessage("Barcha darslar allaqachon ro'yxatda ✓");
+          return true;
+        }
+
         return persistVideos(
-          videos,
-          videos.length + " ta dars yuklandi ✓"
+          merged,
+          added + " ta dars qo'shildi ✓"
         );
       })
       .catch(function (error) {
