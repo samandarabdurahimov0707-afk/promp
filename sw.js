@@ -6,15 +6,15 @@
    - /api/* va /videos/* hech qachon keshlanmaydi.
    ========================================================================== */
 
-const CACHE = "prompt-kursi-v3";
+const CACHE = "prompt-kursi-v4";
 const SHELL = [
   "/",
   "/index.html",
   "/offline.html",
-  "/css/style.css?v=3",
-  "/js/config.js?v=3",
-  "/js/common.js?v=3",
-  "/js/app.js?v=3",
+  "/css/style.css?v=4",
+  "/js/config.js?v=4",
+  "/js/common.js?v=4",
+  "/js/app.js?v=4",
   "/img/icon.svg",
   "/img/icon-192.png",
   "/img/icon-512.png",

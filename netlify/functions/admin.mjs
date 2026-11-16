@@ -7,11 +7,17 @@
      { "secret": "...", "action": "revoke",     "code": "ABC123" }
      { "secret": "...", "action": "grant",      "email": "..." }
      { "secret": "...", "action": "revokeUser", "email": "..." }
+     { "secret": "...", "action": "videos" }
+     { "secret": "...", "action": "saveVideos", "videos": [ ... ] }
+     { "secret": "...", "action": "resetVideos" }
    --------------------------------------------------------------------------
    `overview` — dashboard uchun statistika va barcha buyurtmalar ro'yxati.
    `list`     — faqat kutilayotgan karta o'tkazmalari (eski interfeys).
    `grant`    — buyurtma kodi yo'q bo'lsa, hisobga email orqali ruxsat beradi.
    `revokeUser` — faqat email orqali berilgan ruxsatni bekor qiladi.
+   `videos`   — darslar ro'yxatini qaytaradi.
+   `saveVideos` — darslar ro'yxatini to'liq almashtiradi (tartib, pullik/bepul).
+   `resetVideos` — ro'yxatni o'chiradi, sayt index.html teglariga qaytadi.
    --------------------------------------------------------------------------
    Environment variable:
      ADMIN_SECRET — kamida 8 belgili maxfiy satr
@@ -26,6 +32,19 @@ import {
   publicUser,
   validEmail
 } from "../lib/users.mjs";
+import {
+  LIST_KEY,
+  MAX_CHUNK_SIZE,
+  MAX_VIDEO_BYTES,
+  MAX_VIDEOS,
+  MIN_CHUNK_SIZE,
+  readUpload,
+  readVideoList,
+  removeUpload,
+  validId,
+  validMime,
+  writeVideoList
+} from "../lib/videos.mjs";
 
 const ORDER_PREFIX = "orders/";
 const ENTITLEMENT_PREFIX = "entitlements/";
@@ -431,6 +450,239 @@ async function revoke(code) {
   return json(200, { ok: true, code: order.code, stillPaid: stillPaid });
 }
 
+/* ------------------------------ Dars videolari -------------------------- */
+
+function cleanText(value, max) {
+  return String(value === undefined || value === null ? "" : value)
+    .trim()
+    .slice(0, max);
+}
+
+function validPoster(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return true;
+  if (/^https?:\/\//i.test(raw)) return true;
+  if (raw.charAt(0) === "/") return true;
+  if (raw.indexOf("..") !== -1) return false;
+  return /^[a-z0-9._/-]+$/i.test(raw);
+}
+
+function validVideoUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return true;
+  if (/^https?:\/\//i.test(raw)) return true;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) return false;
+  if (raw.indexOf("//") === 0) return false;
+  if (raw.indexOf("..") !== -1) return false;
+  return /^[a-z0-9._/-]+$/i.test(raw);
+}
+
+function videoError(index, message) {
+  return json(400, {
+    error: (index + 1) + "-dars: " + message
+  });
+}
+
+function normalizeVideo(input, index, seen) {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return { error: videoError(index, "ma'lumot noto'g'ri") };
+  }
+
+  const title = cleanText(input.title, 200);
+
+  if (!title) return { error: videoError(index, "dars nomi bo'sh") };
+
+  const id = cleanText(input.id, 64) || crypto.randomUUID();
+
+  if (!validId(id)) {
+    return { error: videoError(index, "video ID noto'g'ri") };
+  }
+
+  if (seen.has(id)) {
+    return { error: videoError(index, "video ID takrorlangan") };
+  }
+
+  seen.add(id);
+
+  const source =
+    input.source === "upload"
+      ? "upload"
+      : input.source === "youtube"
+        ? "youtube"
+        : "url";
+
+  const record = {
+    id: id,
+    title: title,
+    description: cleanText(input.description, 500),
+    duration: cleanText(input.duration, 20),
+    poster: cleanText(input.poster, 500),
+    paid: Boolean(input.paid),
+    source: source,
+    createdAt: Number(input.createdAt) || Date.now()
+  };
+
+  if (!validPoster(record.poster)) {
+    return { error: videoError(index, "muqova havolasi noto'g'ri") };
+  }
+
+  if (source === "upload") {
+    const uploadId = cleanText(input.uploadId, 64);
+    const size = Number(input.size);
+    const chunkSize = Number(input.chunkSize);
+    const chunkCount = Number(input.chunkCount);
+
+    if (!validId(uploadId)) {
+      return { error: videoError(index, "yuklash ID noto'g'ri") };
+    }
+
+    if (!Number.isInteger(size) || size < 1 || size > MAX_VIDEO_BYTES) {
+      return { error: videoError(index, "fayl hajmi noto'g'ri") };
+    }
+
+    if (
+      !Number.isInteger(chunkSize) ||
+      chunkSize < MIN_CHUNK_SIZE ||
+      chunkSize > MAX_CHUNK_SIZE
+    ) {
+      return { error: videoError(index, "bo'lak hajmi noto'g'ri") };
+    }
+
+    if (
+      !Number.isInteger(chunkCount) ||
+      chunkCount < 1 ||
+      chunkCount > 10000 ||
+      chunkCount !== Math.ceil(size / chunkSize)
+    ) {
+      return { error: videoError(index, "bo'laklar soni noto'g'ri") };
+    }
+
+    record.uploadId = uploadId;
+    record.size = size;
+    record.chunkSize = chunkSize;
+    record.chunkCount = chunkCount;
+    record.mime = validMime(input.mime) ? String(input.mime) : "video/mp4";
+  } else {
+    const src = cleanText(input.src, 1000);
+
+    if (!validVideoUrl(src)) {
+      return { error: videoError(index, "video havolasi noto'g'ri") };
+    }
+
+    record.src = src;
+  }
+
+  return { video: record };
+}
+
+async function videosAction() {
+  const list = await readVideoList();
+  return json(200, { configured: list !== null, videos: list || [] });
+}
+
+async function saveVideos(input) {
+  if (!Array.isArray(input)) {
+    return json(400, { error: "Videos ro'yxati massiv bo'lishi kerak" });
+  }
+
+  if (input.length > MAX_VIDEOS) {
+    return json(400, {
+      error: "Bir kursda " + MAX_VIDEOS + " tadan ko'p dars bo'lmasin"
+    });
+  }
+
+  const oldList = (await readVideoList()) || [];
+  const oldUploads = new Set();
+
+  oldList.forEach(function (video) {
+    if (video && video.uploadId) oldUploads.add(String(video.uploadId));
+  });
+
+  const seen = new Set();
+  const list = [];
+
+  for (let index = 0; index < input.length; index += 1) {
+    const result = normalizeVideo(input[index], index, seen);
+
+    if (result.error) return result.error;
+
+    list.push(result.video);
+  }
+
+  /* Yangi yuklangan videolar haqiqatan tugallanganini tekshiramiz. */
+  for (let index = 0; index < list.length; index += 1) {
+    const video = list[index];
+
+    if (video.source !== "upload" || oldUploads.has(video.uploadId)) {
+      continue;
+    }
+
+    const upload = await readUpload(video.uploadId);
+
+    if (!upload || upload.status !== "ready") {
+      return videoError(index, "video hali yuklanmagan");
+    }
+
+    if (
+      Number(upload.size) !== video.size ||
+      Number(upload.chunkSize) !== video.chunkSize ||
+      Number(upload.chunkCount) !== video.chunkCount
+    ) {
+      return videoError(index, "yuklangan video ma'lumoti mos emas");
+    }
+  }
+
+  await writeVideoList(list);
+
+  /* Ro'yxatdan chiqarilgan videolarning bo'laklarini tozalaymiz. */
+  const usedUploads = new Set();
+
+  list.forEach(function (video) {
+    if (video.source === "upload" && video.uploadId) {
+      usedUploads.add(String(video.uploadId));
+    }
+  });
+
+  for (const video of oldList) {
+    if (
+      video &&
+      video.source === "upload" &&
+      video.uploadId &&
+      !usedUploads.has(String(video.uploadId))
+    ) {
+      try {
+        await removeUpload(video.uploadId, video.chunkCount);
+      } catch (error) {
+        console.error("Video tozalash xatosi:", error && error.message);
+      }
+    }
+  }
+
+  return json(200, { ok: true, videos: list });
+}
+
+/*
+ * Ro'yxatni butunlay o'chiradi — sayt yana index.html dagi <video>
+ * teglariga qaytadi. Yuklangan bo'laklar ham tozalanadi.
+ */
+async function resetVideos() {
+  const list = (await readVideoList()) || [];
+
+  for (const video of list) {
+    if (!video || video.source !== "upload" || !video.uploadId) continue;
+
+    try {
+      await removeUpload(video.uploadId, video.chunkCount);
+    } catch (error) {
+      console.error("Video tozalash xatosi:", error && error.message);
+    }
+  }
+
+  await remove(LIST_KEY);
+
+  return json(200, { ok: true, configured: false, videos: [] });
+}
+
 export async function handler(event) {
   if (event.httpMethod !== "POST") {
     return json(405, { error: "Faqat POST so'rovlar qabul qilinadi" });
@@ -467,6 +719,12 @@ export async function handler(event) {
       return grantByEmail(body.email);
     case "revokeUser":
       return revokeByEmail(body.email);
+    case "videos":
+      return videosAction();
+    case "saveVideos":
+      return saveVideos(body.videos);
+    case "resetVideos":
+      return resetVideos();
     default:
       return json(400, { error: "Amal noto'g'ri" });
   }

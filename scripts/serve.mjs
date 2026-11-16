@@ -79,7 +79,7 @@ function readBody(req) {
     req.on("data", function (chunk) {
       size += chunk.length;
 
-      if (size > 1024 * 1024) {
+      if (size > 8 * 1024 * 1024) {
         reject(new Error("So'rov hajmi juda katta"));
         req.destroy();
         return;
@@ -215,7 +215,20 @@ async function handleApi(req, res, pathname, url) {
       return;
     }
 
-    res.end(result && result.body !== undefined ? result.body : "");
+    var payload = result && result.body !== undefined ? result.body : "";
+
+    if (result && result.isBase64Encoded) {
+      var buffer = Buffer.from(String(payload || ""), "base64");
+
+      if (!res.getHeader("content-length")) {
+        res.setHeader("content-length", String(buffer.length));
+      }
+
+      res.end(buffer);
+      return;
+    }
+
+    res.end(payload);
   } catch (error) {
     console.error("[api:" + name + "]", error);
     sendJson(res, 500, {

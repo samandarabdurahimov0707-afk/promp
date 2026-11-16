@@ -1,7 +1,8 @@
 /* ==========================================================================
    Prompt injenering kursi — sayt logikasi
    --------------------------------------------------------------------------
-   - <video> teglaridan dars kartochkalarini yaratadi
+   - <video> teglaridan yoki admin panelda saqlangan ro'yxatdan dars
+     kartochkalarini yaratadi
    - qidiruv, filtrlar va o'quv jarayonini (progress) saqlaydi
    - Payme / karta orqali to'lov oynasini boshqaradi
    ========================================================================== */
@@ -95,6 +96,7 @@
   var authBusy = false;
 
   var VIDEO_LIST = readVideoTags();
+  var videosPromise = null;
   var progress = loadProgress();
   var lastLessonKey = loadLastLesson();
   var currentFilter = loadFilter();
@@ -166,6 +168,39 @@
                 (lesson > 0 ? lesson >= paidFrom : number >= paidFrom)))
         };
       });
+  }
+
+  /*
+   * Admin panelda saqlangan darsni sayt ichidagi ko'rinishga keltiradi.
+   * `source: "upload"` — fayl Blobs'da, oqim `/api/video` orqali keladi.
+   */
+  function normalizeStoredVideo(video, index) {
+    var source =
+      video.source === "upload"
+        ? "upload"
+        : video.source === "youtube"
+          ? "youtube"
+          : "url";
+    var src =
+      source === "upload"
+        ? apiUrl("/video") + "?id=" + encodeURIComponent(video.id)
+        : String(video.src || "");
+
+    return {
+      id: String(video.id || ""),
+      number: index + 1,
+      title: String(video.title || "Nomsiz dars"),
+      description: String(video.description || ""),
+      duration: String(video.duration || ""),
+      poster: String(video.poster || ""),
+      paid: Boolean(video.paid),
+      type: source === "youtube" ? "youtube" : "file",
+      src: src,
+      sources: [],
+      bunny: "",
+      storage: source === "upload" ? "blob" : "url",
+      mime: String(video.mime || "")
+    };
   }
 
   function parseYouTubeId(src) {
@@ -608,6 +643,7 @@
   /* ---------------------------- O'quv jarayoni --------------------------- */
 
   function progressKey(video) {
+    if (video && video.id) return "id:" + String(video.id);
     return String(video.number) + "|" + String(video.title || "");
   }
 
@@ -1269,6 +1305,46 @@
     location.href = url;
   }
 
+  /*
+   * Admin panelda saqlangan darslar ro'yxatini oladi. Ro'yxat mavjud bo'lsa
+   * (hatto bo'sh bo'lsa ham) u <video> teglaridan ustun turadi. Server
+   * sozlanmagan bo'lsa, sayt avvalgi holatda ishlayveradi.
+   */
+  function loadVideos() {
+    if (videosPromise) return videosPromise;
+
+    videosPromise = fetch(apiUrl("/videos"), {
+      headers: { accept: "application/json" },
+      cache: "no-store"
+    })
+      .then(function (response) {
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        return response.json();
+      })
+      .then(function (data) {
+        if (
+          !data ||
+          data.configured !== true ||
+          !Array.isArray(data.videos)
+        ) {
+          return false;
+        }
+
+        VIDEO_LIST = data.videos.map(normalizeStoredVideo);
+        render();
+        return true;
+      })
+      .catch(function () {
+        return false;
+      })
+      .then(function (result) {
+        videosPromise = null;
+        return result;
+      });
+
+    return videosPromise;
+  }
+
   function loadRemoteConfig() {
     var promise =
       window.PK && window.PK.configPromise
@@ -1770,6 +1846,8 @@
 
   render();
   renderAuthState();
+
+  loadVideos();
 
   loadRemoteConfig().then(function () {
     updatePaywall();

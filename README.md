@@ -58,8 +58,11 @@ prompt-kursi/
 │  │  ├─ auth.mjs              # POST /api/auth    — hisob: kirish/ro'yxat/chiqish
 │  │  ├─ admin.mjs             # POST /api/admin   — admin amallari
 │  │  ├─ payme.mjs             # POST /api/payme   — Payme Merchant API
-│  │  └─ bunny-token.mjs       # GET  /api/bunny-token — imzolangan video
-│  └─ lib/                     # store, access, auth, users, merge, rate, settings
+│  │  ├─ bunny-token.mjs       # GET  /api/bunny-token — imzolangan video
+│  │  ├─ videos.mjs            # GET  /api/videos  — darslar ro'yxati
+│  │  ├─ video.mjs             # GET  /api/video   — Range bilan video oqimi
+│  │  └─ video-upload.mjs      # POST /api/video-upload — bo'laklab yuklash
+│  └─ lib/                     # store, access, auth, users, merge, rate, settings, videos
 ├─ scripts/
 │  ├─ serve.mjs                # lokal dev server (statik + /api/*)
 │  └─ check.mjs                # sintaksis/JSON/majburiy fayl tekshiruvi
@@ -107,7 +110,7 @@ to'lov va admin funksiyalari ishlamaydi.
 
 ```bash
 npm run check   # JS sintaksisi, JSON, majburiy fayllar, CSP inline tekshiruvi
-npm test        # backend: config, health, order, access, admin, Payme, Bunny
+npm test        # backend: config, health, order, access, admin, Payme, Bunny, video
 npm run verify  # ikkalasi ketma-ket
 ```
 
@@ -130,6 +133,31 @@ Har bir `<video>` tegi — bitta kartochka:
 
 Tegni nusxa ko'chirib, ro'yxat oxiriga qo'shsangiz — yangi kartochka paydo
 bo'ladi va yuqoridagi hisoblagich avtomatik oshadi. Qo'lda sanash shart emas.
+
+### Admin panel orqali yuklash (tavsiya)
+
+`admin.html` → **Darslar (videolar)** bo'limi kompyuterdan video faylni
+to'g'ridan-to'g'ri yuklash imkonini beradi. Ro'yxat Netlify Blobs'da saqlanadi
+va sayt `<video>` teglari o'rniga shu ro'yxatni ko'rsatadi.
+
+1. **Mavjud darslarni yuklash** — `index.html` dagi teglarni bir marta
+   ro'yxatga ko'chiradi (eski darslar yo'qolmasin).
+2. **Video fayl** — MP4 tavsiya etiladi. Fayl 3 MB li bo'laklarda ketma-ket
+   yuklanadi; sahifani yopmang. Maksimal hajm — **1 GB**.
+3. Har bir darsni **bepul/pullik** qilib belgilash, **↑ ↓** bilan tartiblash,
+   **Tahrirlash** va **O'chirish** mumkin. O'chirilganda Blobs'dagi bo'laklar
+   ham tozalanadi.
+
+Muhim cheklovlar:
+
+- Netlify Functions so'rov/javob hajmi ~6 MB, shuning uchun bo'laklash kerak.
+- Video funksiya orqali oqadi (`/api/video`), ya'ni **trafik Netlify
+  bandwidth kvotasidan** sarflanadi. Katta auditoriya uchun Bunny Stream yoki
+  tashqi CDN arzonroq bo'lishi mumkin.
+- Ro'yxat birinchi marta saqlanganda u `index.html` dagi teglardan ustun
+  turadi. Shu sabab avval **Mavjud darslarni yuklash** tugmasini bosing.
+- Blobs ishlamasa (token yo'q/eskirgan), yuklash va oqim ishlamaydi;
+  sayt esa avvalgidek `<video>` teglariga qaytadi.
 
 | Atribut | Ma'nosi |
 |---|---|
@@ -231,6 +259,8 @@ o'chiriladi.
 | `PAYMENT_TELEGRAM` | yo'q | Telegram username yoki havola (standart: `abay_pg`) |
 | `ADMIN_SECRET` | ha | Kamida **8 belgi**li maxfiy satr (admin panel) |
 | `ACCESS_SECRET` | ha | Kamida **16 belgi**li satr; bo'lmasa huquq berilmaydi |
+| `SITE_ID` | video uchun | Netlify sayt ID (Blobs'ga qo'lda ulanish) |
+| `NETLIFY_BLOBS_TOKEN` | video uchun | Blobs'ga yozish uchun Netlify token |
 | `BUNNY_LIBRARY_ID` | yo'q | Bunny Stream kutubxonasi |
 | `BUNNY_TOKEN_KEY` | yo'q | Bunny Stream token kaliti |
 

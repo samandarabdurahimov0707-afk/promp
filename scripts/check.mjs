@@ -88,13 +88,17 @@ const required = [
   "netlify/functions/config.mjs",
   "netlify/functions/health.mjs",
   "netlify/functions/bunny-token.mjs",
+  "netlify/functions/videos.mjs",
+  "netlify/functions/video.mjs",
+  "netlify/functions/video-upload.mjs",
   "netlify/lib/access.mjs",
   "netlify/lib/auth.mjs",
   "netlify/lib/merge.mjs",
   "netlify/lib/rate.mjs",
   "netlify/lib/settings.mjs",
   "netlify/lib/store.mjs",
-  "netlify/lib/users.mjs"
+  "netlify/lib/users.mjs",
+  "netlify/lib/videos.mjs"
 ];
 
 for (const relative of required) {

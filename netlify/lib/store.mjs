@@ -140,3 +140,105 @@ export async function list(prefix) {
     .filter(([key]) => key.indexOf(prefix) === 0)
     .map(([, value]) => value);
 }
+
+/* --------------------------------------------------------------------------
+   Ikkilik ma'lumot (video bo'laklari) uchun yordamchilar.
+   -------------------------------------------------------------------------- */
+
+function toBuffer(value) {
+  if (!value) return null;
+  if (Buffer.isBuffer(value)) return value;
+  if (value instanceof ArrayBuffer) return Buffer.from(value);
+  if (ArrayBuffer.isView(value)) {
+    return Buffer.from(value.buffer, value.byteOffset, value.byteLength);
+  }
+
+  return null;
+}
+
+function toArrayBuffer(value) {
+  const buffer = toBuffer(value);
+  if (!buffer) return null;
+
+  return buffer.buffer.slice(
+    buffer.byteOffset,
+    buffer.byteOffset + buffer.byteLength
+  );
+}
+
+export async function writeBytes(key, value) {
+  const buffer = toBuffer(value);
+  if (!buffer) throw new Error("writeBytes: noto'g'ri ma'lumot");
+
+  const s = blobs();
+
+  if (s) {
+    try {
+      await s.set(key, toArrayBuffer(buffer));
+      return true;
+    } catch (error) {
+      failed("writeBytes", key, error);
+    }
+  }
+
+  memory.set(key, buffer);
+  return true;
+}
+
+export async function readBytes(key) {
+  const s = blobs();
+
+  if (s) {
+    try {
+      const value = await s.get(key, { type: "arrayBuffer" });
+      if (value !== null && value !== undefined) return Buffer.from(value);
+    } catch (error) {
+      failed("readBytes", key, error);
+    }
+  }
+
+  return memory.has(key) ? toBuffer(memory.get(key)) : null;
+}
+
+export async function removeKeys(keys) {
+  const list = Array.isArray(keys) ? keys.filter(Boolean) : [];
+
+  if (!list.length) return;
+
+  const s = blobs();
+
+  if (s) {
+    try {
+      await Promise.all(
+        list.map(function (key) {
+          return s.delete(key);
+        })
+      );
+    } catch (error) {
+      failed("removeKeys", list.length + " ta kalit", error);
+    }
+  }
+
+  list.forEach(function (key) {
+    memory.delete(key);
+  });
+}
+
+export async function listKeys(prefix) {
+  const s = blobs();
+
+  if (s) {
+    try {
+      const result = await s.list({ prefix });
+      return (result.blobs || []).map(function (item) {
+        return item.key;
+      });
+    } catch (error) {
+      failed("listKeys", prefix, error);
+    }
+  }
+
+  return Array.from(memory.keys()).filter(function (key) {
+    return key.indexOf(prefix) === 0;
+  });
+}

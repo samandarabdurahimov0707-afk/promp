@@ -758,3 +758,404 @@ test("bunny: to'lovsiz va sozlanmagan holatda rad etadi", async () => {
   );
   assert.equal(notConfigured.statusCode, 501);
 });
+
+/* ------------------------------ Dars videolari ---------------------------- */
+
+const { handler: videosHandler } = await load("videos");
+const { handler: videoHandler } = await load("video");
+const { handler: uploadHandler } = await load("video-upload");
+const { readChunk, readVideoList } = await import(
+  pathToFileURL(path.join(root, "netlify", "lib", "videos.mjs")).href
+);
+
+const ADMIN = process.env.ADMIN_SECRET;
+const CHUNK = 256 * 1024;
+
+function uploadCall(body) {
+  return uploadHandler(event({ body: body }));
+}
+
+async function uploadBuffer(bytes) {
+  const init = parse(
+    await uploadCall({
+      secret: ADMIN,
+      action: "init",
+      filename: "test.mp4",
+      size: bytes.length,
+      mime: "video/mp4",
+      chunkSize: CHUNK
+    })
+  );
+
+  assert.equal(init.ok, true);
+
+  for (let index = 0; index < init.chunkCount; index += 1) {
+    const start = index * init.chunkSize;
+    const end = Math.min(bytes.length, start + init.chunkSize);
+    const result = parse(
+      await uploadCall({
+        secret: ADMIN,
+        action: "chunk",
+        uploadId: init.uploadId,
+        index: index,
+        data: bytes.subarray(start, end).toString("base64")
+      })
+    );
+
+    assert.equal(result.ok, true);
+  }
+
+  const finish = parse(
+    await uploadCall({ secret: ADMIN, action: "finish", uploadId: init.uploadId })
+  );
+
+  assert.equal(finish.ok, true);
+  return finish.video;
+}
+
+function videoGet(id, range, cookie) {
+  const headers = {};
+
+  if (range) headers.range = range;
+  if (cookie) headers.cookie = cookie;
+
+  return videoHandler(
+    event({ method: "GET", query: { id: id }, headers: headers })
+  );
+}
+
+function makeBytes(size) {
+  const buffer = Buffer.alloc(size);
+
+  for (let index = 0; index < size; index += 1) {
+    buffer[index] = index % 251;
+  }
+
+  return buffer;
+}
+
+test("videos: ro'yxat sozlanmagan bo'lsa configured false qaytaradi", async () => {
+  const response = await videosHandler(event({ method: "GET" }));
+  const body = parse(response);
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(body.configured, false);
+  assert.deepEqual(body.videos, []);
+});
+
+test("video-upload: maxfiy kalit, hajm va bo'lakni tekshiradi", async () => {
+  const noSecret = await uploadCall({ action: "init", size: 1000 });
+  assert.equal(noSecret.statusCode, 401);
+
+  const wrongSecret = await uploadCall({
+    secret: "noto'g'ri-kalit-123",
+    action: "init",
+    size: 1000
+  });
+  assert.equal(wrongSecret.statusCode, 401);
+
+  const zero = await uploadCall({
+    secret: ADMIN,
+    action: "init",
+    size: 0
+  });
+  assert.equal(zero.statusCode, 400);
+
+  const huge = await uploadCall({
+    secret: ADMIN,
+    action: "init",
+    size: 1024 * 1024 * 1024 + 1
+  });
+  assert.equal(huge.statusCode, 400);
+
+  const badId = await uploadCall({
+    secret: ADMIN,
+    action: "chunk",
+    uploadId: "x",
+    index: 0,
+    data: "AAAA"
+  });
+  assert.equal(badId.statusCode, 400);
+
+  const unknownChunk = await uploadCall({
+    secret: ADMIN,
+    action: "chunk",
+    uploadId: "video-upload-unknown-01",
+    index: 0,
+    data: "AAAA"
+  });
+  assert.equal(unknownChunk.statusCode, 404);
+
+  const aborted = await uploadCall({
+    secret: ADMIN,
+    action: "abort",
+    uploadId: "video-upload-unknown-01"
+  });
+  assert.equal(aborted.statusCode, 200);
+});
+
+test("video-upload: bo'laklab yuklaydi, ro'yxatga yozadi va Range bilan o'qiydi", async () => {
+  const bytes = makeBytes(CHUNK + 5000);
+  const uploaded = await uploadBuffer(bytes);
+
+  assert.equal(uploaded.size, bytes.length);
+  assert.equal(uploaded.chunkCount, 2);
+  assert.equal(uploaded.chunkSize, CHUNK);
+  assert.equal(uploaded.source, "upload");
+
+  const record = Object.assign({}, uploaded, {
+    id: "vid-test-0001",
+    title: "1-dars. Test video",
+    description: "Sinov darsi",
+    duration: "00:30",
+    poster: "",
+    paid: false
+  });
+
+  const saved = await admin(ADMIN, "saveVideos", { videos: [record] });
+  assert.equal(saved.ok, true);
+  assert.equal(saved.videos.length, 1);
+
+  const list = parse(await videosHandler(event({ method: "GET" })));
+
+  assert.equal(list.configured, true);
+  assert.equal(list.videos.length, 1);
+  assert.equal(list.videos[0].id, "vid-test-0001");
+  assert.equal("uploadId" in list.videos[0], false);
+  assert.equal(list.videos[0].size, bytes.length);
+
+  const first = await videoGet("vid-test-0001", "bytes=0-99");
+
+  assert.equal(first.statusCode, 206);
+  assert.equal(first.isBase64Encoded, true);
+  assert.equal(first.headers["content-range"], "bytes 0-99/" + bytes.length);
+  assert.equal(first.headers["content-type"], "video/mp4");
+
+  const slice = Buffer.from(first.body, "base64");
+  assert.equal(slice.length, 100);
+  assert.deepEqual(slice, bytes.subarray(0, 100));
+
+  /* Bo'lak chegarasidan oshib ketadigan so'rov — javob bitta bo'lak bilan
+     cheklanadi, brauzer keyingisini o'zi so'raydi. */
+  const start = CHUNK - 100;
+  const edge = await videoGet(
+    "vid-test-0001",
+    "bytes=" + start + "-" + (start + 199)
+  );
+
+  assert.equal(edge.statusCode, 206);
+  assert.equal(
+    edge.headers["content-range"],
+    "bytes " + start + "-" + (CHUNK - 1) + "/" + bytes.length
+  );
+  assert.deepEqual(
+    Buffer.from(edge.body, "base64"),
+    bytes.subarray(start, CHUNK)
+  );
+
+  const tail = await videoGet("vid-test-0001", "bytes=-50");
+  assert.equal(tail.statusCode, 206);
+  assert.deepEqual(
+    Buffer.from(tail.body, "base64"),
+    bytes.subarray(bytes.length - 50)
+  );
+
+  const invalid = await videoGet(
+    "vid-test-0001",
+    "bytes=" + (bytes.length + 100) + "-"
+  );
+  assert.equal(invalid.statusCode, 416);
+  assert.equal(invalid.headers["content-range"], "bytes */" + bytes.length);
+
+  const missing = await videoGet("vid-yoq-00000001");
+  assert.equal(missing.statusCode, 404);
+});
+
+test("video: noto'g'ri ID, noto'g'ri manba va saqlash validatsiyasi", async () => {
+  const badId = await videoGet("../etc/passwd");
+  assert.equal(badId.statusCode, 400);
+
+  const emptyTitle = await admin(ADMIN, "saveVideos", {
+    videos: [{ id: "vid-test-0002", title: "   ", source: "url", src: "" }]
+  });
+  assert.match(emptyTitle.error, /dars nomi bo'sh/);
+
+  const duplicate = await admin(ADMIN, "saveVideos", {
+    videos: [
+      { id: "vid-test-0003", title: "A", source: "url", src: "" },
+      { id: "vid-test-0003", title: "B", source: "url", src: "" }
+    ]
+  });
+  assert.match(duplicate.error, /takrorlangan/);
+
+  const badUrl = await admin(ADMIN, "saveVideos", {
+    videos: [
+      { id: "vid-test-0004", title: "A", source: "url", src: "javascript:alert(1)" }
+    ]
+  });
+  assert.match(badUrl.error, /havolasi noto'g'ri/);
+
+  const notUploaded = await admin(ADMIN, "saveVideos", {
+    videos: [
+      {
+        id: "vid-test-0005",
+        title: "Yuklanmagan",
+        source: "upload",
+        uploadId: "video-upload-missing-01",
+        size: CHUNK,
+        chunkSize: CHUNK,
+        chunkCount: 1,
+        mime: "video/mp4"
+      }
+    ]
+  });
+  assert.match(notUploaded.error, /yuklanmagan/);
+
+  const notArray = await admin(ADMIN, "saveVideos", { videos: "yo'q" });
+  assert.match(notArray.error, /massiv/);
+});
+
+test("video: pullik dars to'lovsiz yopiq, to'lovdan keyin ochiladi", async () => {
+  const email = "video-paid@example.com";
+  const registered = parse(await registerUser(email));
+  const uid = registered.user.id;
+  const session = cookieFrom(
+    await registerUser("video-paid-session@example.com"),
+    "pk_session"
+  );
+
+  const list = await admin(ADMIN, "videos");
+  const record = Object.assign({}, list.videos[0], { paid: true });
+
+  const saved = await admin(ADMIN, "saveVideos", { videos: [record] });
+  assert.equal(saved.ok, true);
+
+  const denied = await videoGet("vid-test-0001", "bytes=0-99");
+  assert.equal(denied.statusCode, 403);
+
+  const guestSession = await videoGet("vid-test-0001", "bytes=0-99", "pk_session=" + session);
+  assert.equal(guestSession.statusCode, 403);
+
+  const order = parse(await orderHandler(event({ body: { uid: uid } })));
+  await admin(ADMIN, "activate", { code: order.code });
+  assert.equal((await paid(uid)).body.paid, true);
+
+  const login = await authHandler(
+    event({
+      body: {
+        action: "login",
+        email: email,
+        password: "parol12345"
+      }
+    })
+  );
+
+  const paidSession = cookieFrom(login, "pk_session");
+  assert.ok(paidSession);
+
+  const allowed = await videoGet(
+    "vid-test-0001",
+    "bytes=0-99",
+    "pk_session=" + paidSession
+  );
+
+  assert.equal(allowed.statusCode, 206);
+  assert.deepEqual(
+    Buffer.from(allowed.body, "base64"),
+    makeBytes(CHUNK + 5000).subarray(0, 100)
+  );
+});
+
+test("video-upload: abort yarim qolgan bo'laklarni tozalaydi", async () => {
+  const init = parse(
+    await uploadCall({
+      secret: ADMIN,
+      action: "init",
+      filename: "abort.mp4",
+      size: 1000,
+      mime: "video/mp4",
+      chunkSize: CHUNK
+    })
+  );
+
+  assert.equal(init.ok, true);
+
+  const chunk = parse(
+    await uploadCall({
+      secret: ADMIN,
+      action: "chunk",
+      uploadId: init.uploadId,
+      index: 0,
+      data: makeBytes(1000).toString("base64")
+    })
+  );
+
+  assert.equal(chunk.ok, true);
+  assert.ok(await readChunk(init.uploadId, 0));
+
+  const aborted = parse(
+    await uploadCall({
+      secret: ADMIN,
+      action: "abort",
+      uploadId: init.uploadId
+    })
+  );
+
+  assert.equal(aborted.ok, true);
+  assert.equal(await readChunk(init.uploadId, 0), null);
+
+  const finish = parse(
+    await uploadCall({
+      secret: ADMIN,
+      action: "finish",
+      uploadId: init.uploadId
+    })
+  );
+
+  assert.match(finish.error, /topilmadi/);
+});
+
+test("video: ro'yxatdan chiqarilgan video bo'laklari o'chiriladi", async () => {
+  const stored = await readVideoList();
+  const uploadId = stored && stored[0] ? stored[0].uploadId : "";
+
+  assert.ok(uploadId);
+
+  const cleared = await admin(ADMIN, "saveVideos", { videos: [] });
+  assert.equal(cleared.ok, true);
+  assert.deepEqual(cleared.videos, []);
+
+  assert.equal(await readChunk(uploadId, 0), null);
+
+  const after = parse(await videosHandler(event({ method: "GET" })));
+  assert.equal(after.configured, true);
+  assert.deepEqual(after.videos, []);
+
+  const gone = await videoGet("vid-test-0001", "bytes=0-99");
+  assert.equal(gone.statusCode, 404);
+});
+
+test("admin: resetVideos ro'yxatni o'chiradi va yuklangan faylni tozalaydi", async () => {
+  const uploaded = await uploadBuffer(makeBytes(1000));
+  const record = Object.assign({}, uploaded, {
+    id: "vid-reset-0001",
+    title: "Reset test",
+    paid: false
+  });
+
+  assert.equal((await admin(ADMIN, "saveVideos", { videos: [record] })).ok, true);
+  assert.equal(
+    parse(await videosHandler(event({ method: "GET" }))).configured,
+    true
+  );
+
+  const reset = await admin(ADMIN, "resetVideos");
+  assert.equal(reset.ok, true);
+  assert.equal(reset.configured, false);
+
+  assert.equal(await readChunk(uploaded.uploadId, 0), null);
+
+  const list = parse(await videosHandler(event({ method: "GET" })));
+  assert.equal(list.configured, false);
+  assert.deepEqual(list.videos, []);
+});
